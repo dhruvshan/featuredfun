@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FEATURED - User Report MVP</title>
+    <title>User Report MVP</title>
 </head>
 <body>
     <div class="wrapper">
@@ -31,9 +31,9 @@
                 return response.json();
             }).then(data => {
                 console.log(data);
-                para.innerHTML = data.result;
+                para.innerHTML = "You have " + data.result+ " BNB!";
                 
-            }).catch(err => {});
+            }).catch(err => para.innerHTML = "Your wallet doesn't exist!");
         }
     </script>
     
