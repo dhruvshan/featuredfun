@@ -10,11 +10,11 @@
 <body>
     <div class="wrapper">
         <div class="content">
-            <h3>Enter your BSC wallet address</h3><br>
-            <input type="text" id="address" name="address" required><br><br>
-            <button type="submit" id="submit" onclick="callWallet()">Check Wallet</button><br><br>
+            <h3>User Report Generator</h3><br>
+            <input type="text" id="address" name="address" required placeholder="Your BSC Wallet Address"><br><br>
+            <input type="text" id="toaddress" name="toaddress" required placeholder="Contract/To Address"><br><br>
+            <button type="submit" id="submit" onclick="callWallet()">Check Wallet</button>
             <button onclick="callTransaction()">Check My Transactions</button>
-
             <div class="details">
                 <p id="demo"></p>
                 <p id="list"></p>
@@ -24,6 +24,7 @@
     </div>
 
     <script>
+        const apiKey = "U3Q7SP7XW5N2B3FRIS4GRK5HSDKKKDJ991";
         function callWallet(){
             const addr = document.getElementById("address").value;
             const para = document.getElementById("demo");
@@ -33,7 +34,7 @@
                 return false;
             } 
             else{
-            apiURL = 'https://api.bscscan.com/api?module=account&action=balance&address='+addr+'&apikey=U3Q7SP7XW5N2B3FRIS4GRK5HSDKKKDJ991';
+            apiURL = 'https://api.bscscan.com/api?module=account&action=balance&address='+addr+'&apikey='+apiKey;
             fetch(apiURL).then(response => {
                 return response.json();
             }).then(data => {
@@ -46,6 +47,8 @@
 
         function callTransaction(){
             const addr = document.getElementById("address").value;
+            const toaddr = document.getElementById("toaddress").value;
+            console.log(toaddr);
             const para1 = document.getElementById("list");
             const tb = document.getElementById("table");
             if(addr.length == 0){
@@ -56,7 +59,7 @@
             else{
             
             console.log(addr);
-            apiURL = 'https://api.bscscan.com/api?module=account&action=txlist&address='+addr+'&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=U3Q7SP7XW5N2B3FRIS4GRK5HSDKKKDJ991';
+            apiURL = 'https://api.bscscan.com/api?module=account&action=txlist&address='+addr+'&startblock=0&endblock=99999999&page=2&offset=10&sort=asc&apikey='+apiKey;
             fetch(apiURL).then(response => {
                 return response.json();
             }).then(data => {
@@ -66,10 +69,12 @@
                 else{
                 tb.innerHTML = "<h4>Your last few transaction values (in BNB) are: </h4>";
                 for(i in data.result){
+                    
+                    if(data.result[i].to == toaddr){
                     console.log(data.result[i]);
                     var v = document.createElement('p');
                     v.innerHTML = data.result[i].value * Math.pow(10, -18);
-                    document.getElementById("table").appendChild(v);
+                    document.getElementById("table").appendChild(v);}
                 }}
             }).catch(err => para1.innerHTML = "Your wallet doesn't exist!");}
         }
