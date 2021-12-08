@@ -64,11 +64,11 @@
                     tb.innerHTML = "<h4>You don't have any transactions</h4>";
                 }
                 else{
-                tb.innerHTML = "<h4>Your last few transaction values are: </h4>";
+                tb.innerHTML = "<h4>Your last few transaction values (in BNB) are: </h4>";
                 for(i in data.result){
                     console.log(data.result[i]);
                     var v = document.createElement('p');
-                    v.innerHTML = data.result[i].value;
+                    v.innerHTML = data.result[i].value * Math.pow(10, -18);
                     document.getElementById("table").appendChild(v);
                 }}
             }).catch(err => para1.innerHTML = "Your wallet doesn't exist!");}
