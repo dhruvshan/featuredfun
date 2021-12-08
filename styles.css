@@ -13,9 +13,18 @@
 div{
     margin-top: 20px;
 }
+table{
+    text-align: center;
+    margin: auto;
+}
+
+td, th{
+    padding: 10px;
+}
 
 input{
     padding: 10px;
+    min-width: 300pxl;
 }
 
 button{

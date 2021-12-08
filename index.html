@@ -67,14 +67,16 @@
                     tb.innerHTML = "<h4>You don't have any transactions</h4>";
                 }
                 else{
-                tb.innerHTML = "<h4>Your last few transaction values (in BNB) are: </h4>";
+                tb.innerHTML = "<h4>Your last few transaction values (in BNB) are: </h4><br><table><tr><th>Date</th><th>Value</th></tr>";
                 for(i in data.result){
-                    
+                    var timeStamp = data.result[i].timeStamp;
+                    var date = Date(timeStamp);
+                    console.log(date);
                     if(data.result[i].to == toaddr){
                     console.log(data.result[i]);
-                    var v = document.createElement('p');
-                    v.innerHTML = data.result[i].value * Math.pow(10, -18);
-                    document.getElementById("table").appendChild(v);}
+                    var v = document.createElement('tr');
+                    v.innerHTML = "<td>"+date+" </td><td>"+data.result[i].value * Math.pow(10, -18)+"</td>";
+                    tb.insertAdjacentElement('beforeend', v);}
                 }}
             }).catch(err => para1.innerHTML = "Your wallet doesn't exist!");}
         }
