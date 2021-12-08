@@ -10,13 +10,16 @@
     <div class="wrapper">
         <div class="content">
             <h3>Enter your BSC wallet address</h3>
-            <form action="javascript:callWallet()">
-            <input type="text" id="address" name="address" required>
-            <button type="submit" id="submit">Check Wallet</button>
-            </form>
+            <!-- <form action="javascript:callWallet()"> -->
+            <input type="text" id="address" name="address" required><br><br>
+            <button type="submit" id="submit" onclick="callWallet()">Check Wallet</button><br><br>
+            <button onclick="callTransaction()">Check My Transactions</button>
+            <!-- </form> -->
 
             <div class="details">
                 <p id="demo"></p>
+                <p id="list"></p>
+                <div id="table"></div>
             </div>
         </div>
     </div>
@@ -31,9 +34,27 @@
                 return response.json();
             }).then(data => {
                 console.log(data);
-                para.innerHTML = "You have " + data.result+ " BNB!";
+                para.innerHTML = "You have <strong>" + data.result+ "</strong> BNB!";
                 
             }).catch(err => para.innerHTML = "Your wallet doesn't exist!");
+        }
+        function callTransaction(){
+            const addr = document.getElementById("address").value;
+            const para1 = document.getElementById("list");
+            const tb = document.getElementById("table");
+            tb.innerHTML = "<h3>Your last few transaction values are: </h3>";
+            console.log(addr);
+            apiURL = 'https://api.bscscan.com/api?module=account&action=txlist&address='+addr+'&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=U3Q7SP7XW5N2B3FRIS4GRK5HSDKKKDJ991';
+            fetch(apiURL).then(response => {
+                return response.json();
+            }).then(data => {
+                for(i in data.result){
+                    console.log(data.result[i]);
+                    var v = document.createElement('p');
+                    v.innerHTML = data.result[i].value;
+                    document.getElementById("table").appendChild(v);
+                }
+            }).catch(err => para1.innerHTML = "Your wallet doesn't exist!");
         }
     </script>
     
