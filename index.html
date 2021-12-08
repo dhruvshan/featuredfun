@@ -38,7 +38,8 @@
                 return response.json();
             }).then(data => {
                 console.log(data);
-                para.innerHTML = "You have <strong>" + data.result+ "</strong> BNB!";
+                const result = data.result * Math.pow(10, -18)
+                para.innerHTML = "You have <strong>" + result+ "</strong> BNB!";
                 
             }).catch(err => para.innerHTML = "Your wallet doesn't exist!");}
         }
