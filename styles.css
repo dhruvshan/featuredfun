@@ -16,6 +16,7 @@ div{
 table{
     text-align: center;
     margin: auto;
+    border: 1px solid black;
 }
 
 tr, td, th{

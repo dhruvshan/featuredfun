@@ -81,7 +81,7 @@
                         console.log(data.result[i]);
                         var v = document.createElement('tr');
                         v.innerHTML = "<td>"+humanDateFormat+" </td><td>"+data.result[i].value * Math.pow(10, -18)+"</td>";
-                        tb.appendChild(v);}
+                        tb.lastChild.firstChild.appendChild(v);}
                 }}
             }).catch(err => para1.innerHTML = "Your wallet doesn't exist!");}
         }
