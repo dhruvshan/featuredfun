@@ -47,6 +47,7 @@
 
         function callTransaction(){
             const addr = document.getElementById("address").value;
+            console.log(addr);
             const toaddr = document.getElementById("toaddress").value;
             console.log(toaddr);
             const para1 = document.getElementById("list");
@@ -59,7 +60,7 @@
             else{
             
             console.log(addr);
-            apiURL = 'https://api.bscscan.com/api?module=account&action=txlist&address='+addr+'&startblock=0&endblock=99999999&page=2&offset=10&sort=asc&apikey='+apiKey;
+            apiURL = 'https://api.bscscan.com/api?module=account&action=txlist&address='+addr+'&startblock=0&endblock=99999999&sort=asc&apikey='+apiKey;
             fetch(apiURL).then(response => {
                 return response.json();
             }).then(data => {
@@ -70,13 +71,14 @@
                 tb.innerHTML = "<h4>Your last few transaction values (in BNB) are: </h4><br><table><tr><th>Date</th><th>Value</th></tr>";
                 for(i in data.result){
                     var timeStamp = data.result[i].timeStamp;
-                    var date = Date(timeStamp);
-                    console.log(date);
-                    if(data.result[i].to == toaddr){
-                    console.log(data.result[i]);
-                    var v = document.createElement('tr');
-                    v.innerHTML = "<td>"+date+" </td><td>"+data.result[i].value * Math.pow(10, -18)+"</td>";
-                    tb.insertAdjacentElement('beforeend', v);}
+                    // var date = new Date(timeStamp);
+                    // console.log(date);
+                    // console.log(data.result[i]);
+                    if(data.result[i].contractAddress == toaddr || data.result[i].to == toaddr ){
+                        console.log(data.result[i]);
+                        var v = document.createElement('tr');
+                        v.innerHTML = "<td>"+timeStamp+" </td><td>"+data.result[i].value * Math.pow(10, -18)+"</td>";
+                        tb.appendChild(v);}
                 }}
             }).catch(err => para1.innerHTML = "Your wallet doesn't exist!");}
         }

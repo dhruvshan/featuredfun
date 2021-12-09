@@ -18,8 +18,9 @@ table{
     margin: auto;
 }
 
-td, th{
+tr, td, th{
     padding: 10px;
+    margin: auto;
 }
 
 input{
