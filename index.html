@@ -70,14 +70,17 @@
                 else{
                 tb.innerHTML = "<h4>Your last few transaction values (in BNB) are: </h4><br><table><tr><th>Date</th><th>Value</th></tr>";
                 for(i in data.result){
-                    var timeStamp = data.result[i].timeStamp;
-                    // var date = new Date(timeStamp);
-                    // console.log(date);
+                    const timeStamp = data.result[i].timeStamp;
+                    // console.log(timeStamp);
+                    const milliseconds = timeStamp * 1000;
+                    const dateObject = new Date(milliseconds);
+                    const humanDateFormat = dateObject.toLocaleString();
+                    // console.log(humanDateFormat);
                     // console.log(data.result[i]);
                     if(data.result[i].contractAddress == toaddr || data.result[i].to == toaddr ){
                         console.log(data.result[i]);
                         var v = document.createElement('tr');
-                        v.innerHTML = "<td>"+timeStamp+" </td><td>"+data.result[i].value * Math.pow(10, -18)+"</td>";
+                        v.innerHTML = "<td>"+humanDateFormat+" </td><td>"+data.result[i].value * Math.pow(10, -18)+"</td>";
                         tb.appendChild(v);}
                 }}
             }).catch(err => para1.innerHTML = "Your wallet doesn't exist!");}
