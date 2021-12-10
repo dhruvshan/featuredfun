@@ -49,6 +49,21 @@
             if (methodId === '0x4e71d92d') {
                 return 'Claim'
             }
+            else if (methodId === '0x'){
+                return 'Transfer'
+            }
+            else if (methodId.includes('0x454a2ab3')){
+                return 'Bid'
+            }
+            else if (methodId.includes('0xefef39a1')){
+                return 'Purchase'
+            }
+            else if (methodId.includes('0x158a4d5e')){
+                return 'Mint'
+            }
+            else if (methodId.includes('0x21b62886')){
+                return 'Complete Auction'
+            }
             else if (methodId.includes('0xdda342bb')) {
                 return 'List'
             }
@@ -60,9 +75,9 @@
 
         function callTransaction(){
             const addr = document.getElementById("address").value;
-            console.log(addr);
+            // console.log(addr);
             const toaddr = document.getElementById("toaddress").value;
-            console.log(toaddr);
+            // console.log(toaddr);
             const para1 = document.getElementById("list");
             const tb = document.getElementById("table");
             if(addr.length == 0){
@@ -73,7 +88,7 @@
             else{
             
             console.log(addr);
-            apiURL = 'https://api.bscscan.com/api?module=account&action=txlist&address='+addr+'&startblock=0&endblock=99999999&sort=asc&apikey='+apiKey;
+            apiURL = 'https://api.bscscan.com/api?module=account&action=txlist&address='+addr+'&startblock=0&endblock=99999999&apikey='+apiKey;
             fetch(apiURL).then(response => {
                 return response.json();
             }).then(data => {
@@ -85,6 +100,7 @@
                 for(i in data.result){
                     const timeStamp = data.result[i].timeStamp;
                     const method = checkMethod(data.result[i].input);
+                    // console.log(method);
                     // console.log(timeStamp);
                     const milliseconds = timeStamp * 1000;
                     const dateObject = new Date(milliseconds);
