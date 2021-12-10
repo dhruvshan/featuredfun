@@ -4,6 +4,11 @@
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
+body{
+    background-color: black;
+    color: white;
+}
+
 .wrapper{
     margin: auto;
     width: 80%;
@@ -16,7 +21,7 @@ div{
 table{
     text-align: center;
     margin: auto;
-    border: 1px solid black;
+    border: 1px solid white;
 }
 
 tr, td, th{
@@ -31,4 +36,7 @@ input{
 
 button{
     padding: 10px;
+    background-color: black;
+    color: white;
+    border: 1px solid white;
 }
