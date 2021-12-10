@@ -45,6 +45,19 @@
             }).catch(err => para.innerHTML = "Your wallet doesn't exist!");}
         }
 
+        function checkMethod(methodId) {
+            if (methodId === '0x4e71d92d') {
+                return 'Claim'
+            }
+            else if (methodId.includes('0xdda342bb')) {
+                return 'List'
+            }
+            else if (methodId.includes('0xa22cb465')) {
+                return 'Set Approval for All'
+            }
+            else return methodId
+        }
+
         function callTransaction(){
             const addr = document.getElementById("address").value;
             console.log(addr);
@@ -68,9 +81,10 @@
                     tb.innerHTML = "<h4>You don't have any transactions</h4>";
                 }
                 else{
-                tb.innerHTML = "<h4>Your last few transaction values (in BNB) are: </h4><br><table><tr><th>Date</th><th>Value</th></tr>";
+                tb.innerHTML = "<h4>Your last few transaction values (in BNB) are: </h4><br><table><tr><th>Date</th><th>Value</th><th>Method</th></tr>";
                 for(i in data.result){
                     const timeStamp = data.result[i].timeStamp;
+                    const method = checkMethod(data.result[i].input);
                     // console.log(timeStamp);
                     const milliseconds = timeStamp * 1000;
                     const dateObject = new Date(milliseconds);
@@ -80,7 +94,8 @@
                     if(data.result[i].contractAddress == toaddr || data.result[i].to == toaddr ){
                         console.log(data.result[i]);
                         var v = document.createElement('tr');
-                        v.innerHTML = "<td>"+humanDateFormat+" </td><td>"+data.result[i].value * Math.pow(10, -18)+"</td>";
+                        const transactionValues = data.result[i].value * Math.pow(10, -18)
+                        v.innerHTML = "<td>"+humanDateFormat+" </td><td>"+transactionValues.toFixed(5)+"</td><td>"+method+"</td>";
                         tb.lastChild.firstChild.appendChild(v);}
                 }}
             }).catch(err => para1.innerHTML = "Your wallet doesn't exist!");}
