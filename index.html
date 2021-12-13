@@ -73,6 +73,10 @@
             else return methodId
         }
 
+        function makeLink(hash){
+            return "https://bscscan.com/tx/"+ hash;
+        }
+
         function callTransaction(){
             const addr = document.getElementById("address").value;
             // console.log(addr);
@@ -96,10 +100,12 @@
                     tb.innerHTML = "<h4>You don't have any transactions</h4>";
                 }
                 else{
-                tb.innerHTML = "<h4>Your last few transaction values (in BNB) are: </h4><br><table><tr><th>Date</th><th>Value</th><th>Method</th></tr>";
+                tb.innerHTML = "<h4>Your last few transaction values (in BNB) are: </h4><br><table><tr><th>Date</th><th>Value</th><th>Method</th><th>BSC Link</th></tr>";
                 for(i in data.result){
                     const timeStamp = data.result[i].timeStamp;
                     const method = checkMethod(data.result[i].input);
+                    const link = makeLink(data.result[i].hash);
+                    // console.log(link);
                     // console.log(method);
                     // console.log(timeStamp);
                     const milliseconds = timeStamp * 1000;
@@ -111,7 +117,7 @@
                         console.log(data.result[i]);
                         var v = document.createElement('tr');
                         const transactionValues = data.result[i].value * Math.pow(10, -18)
-                        v.innerHTML = "<td>"+humanDateFormat+" </td><td>"+transactionValues.toFixed(5)+"</td><td>"+method+"</td>";
+                        v.innerHTML = "<td>"+humanDateFormat+" </td><td>"+transactionValues.toFixed(5)+"</td><td>"+method+"</td><td><a href="+link+">Link</a></td>";
                         tb.lastChild.firstChild.appendChild(v);}
                 }}
             }).catch(err => para1.innerHTML = "Your wallet doesn't exist!");}
