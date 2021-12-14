@@ -77,17 +77,15 @@
         }
 
         function makeFeaturedLink(contract, tokenID) {
-            if (contract && tokenID) {
-                return "https://www.featured.market/nft/"+hash+"/"+tokenID;
+            if (contract !== null && tokenID !== null) {
+                return "https://www.featured.market/nft/"+ contract +"/"+ tokenID;
             }
             else return "https://www.featured.market/"
         }
 
         function callTransaction(){
             const addr = document.getElementById("address").value;
-            // console.log(addr);
             const toaddr = document.getElementById("toaddress").value;
-            // console.log(toaddr);
             const para1 = document.getElementById("list");
             const tb = document.getElementById("table");
             var txData;
@@ -101,17 +99,6 @@
                 apiURL = 'https://api.bscscan.com/api?module=account&action=txlist&address='+addr+'&startblock=0&endblock=99999999&apikey='+apiKey;
                 apiURL2 = 'https://api.bscscan.com/api?module=account&action=tokennfttx&address='+addr+'&page=1&offset=100&startblock=0&endblock=999999999&sort=asc&apikey='+apiKey;
 
-                // Promise.all([
-                //     fetch(apiURL),
-                //     fetch(apiURL2)
-                // ]).then(responses => {
-                //     return Promise.all(responses.map(function (response) {
-                //         return response.json();
-                //     }));
-                // }).then(data => {
-                //     console.log(data);
-                // }).catch(err => console.log(error));
-
                 const checkResponseStatus = (response) => {
                     if (!response.ok) throw new Error(`Status code error: ${response.status}`);
 	                return response.json();
@@ -121,23 +108,22 @@
                     return fetch(apiURL2);
                 };
 
-                const checkIfDataMatches = () => {
+                const appendContactData = () => {
                     if (txData.result.length === 0 || contractData.result.length === 0) {
                         return []
                     }
                     else {
                         txData.result.forEach(tx => {
-                            var relatedData = contractData.result.filter(data => {
-                                return data.hash === tx.hash;
+                            var relatedData = contractData.result.filter(contract => {
+                                return contract.hash === tx.hash;
                             })
-                            console.log(relatedData[0], 'relatedData')
                             if (!relatedData[0]) {
                                 tx.contractAddress = null;
                                 tx.tokenID = null;
                             }
                             else {
-                                tx.contractAddress = relatedData.contractAddress;
-                                tx.tokenID = relatedData.tokenID;
+                                tx.contractAddress = relatedData[0].contractAddress;
+                                tx.tokenID = relatedData[0].tokenID;
                             }
                         })
                         return txData
@@ -146,41 +132,32 @@
 
                 fetch(apiURL)
                     .then(checkResponseStatus)
-                    .then((data) => {
-                        txData = data;
-                    })
+                    .then(data => txData = data)
                     .then(fetchContractData)
                     .then(checkResponseStatus)
-                    .then((data) => {
-                        contractData = data;
-                    })
-                    .then(checkIfDataMatches)
+                    .then(data => contractData = data)
+                    .then(appendContactData)
                     .then(data => {
-                        console.log(data, 'Data lol');
                         if (data.result.length == 0){
                             tb.innerHTML = "<h4>You don't have any transactions</h4>";
                         }
                         else{
-                        tb.innerHTML = "<h4>Your last few transaction values (in BNB) are: </h4><br><table><tr><th>Date</th><th>Value</th><th>Method</th><th>BSC Link</th><th>Featured Link</th></tr>";
-                        for(i in data.result){
-                            const timeStamp = data.result[i].timeStamp;
-                            const method = checkMethod(data.result[i].input);
-                            const link = makeLink(data.result[i].hash);
-                            const featuredLink = makeFeaturedLink(data.result[i].contractAddress, data.result[i].tokenID);
-                            // console.log(link);
-                            // console.log(method);
-                            // console.log(timeStamp);
-                            const milliseconds = timeStamp * 1000;
-                            const dateObject = new Date(milliseconds);
-                            const humanDateFormat = dateObject.toLocaleString();
-                            // console.log(humanDateFormat);
-                            // console.log(data.result[i]);
-                            if(data.result[i].contractAddress == toaddr || data.result[i].to == toaddr ){
-                                var v = document.createElement('tr');
-                                const transactionValues = data.result[i].value * Math.pow(10, -18)
-                                v.innerHTML = "<td>"+humanDateFormat+" </td><td>"+transactionValues.toFixed(5)+"</td><td>"+method+"</td><td><a href="+link+">Link</a></td><td><a href="+featuredLink+">Link</a></td>";
-                                tb.lastChild.firstChild.appendChild(v);}
-                        }}
+                            tb.innerHTML = "<h4>Your last few transaction values (in BNB) are: </h4><br><table><tr><th>Date</th><th>Value</th><th>Method</th><th>BSC Link</th><th>Featured Link</th></tr>";
+                            data.result.forEach((tx) => {
+                                const timeStamp = tx.timeStamp;
+                                const method = checkMethod(tx.input);
+                                const link = makeLink(tx.hash);
+                                const featuredLink = makeFeaturedLink(tx.contractAddress, tx.tokenID);
+                                const milliseconds = timeStamp * 1000;
+                                const dateObject = new Date(milliseconds);
+                                const humanDateFormat = dateObject.toLocaleString();
+                                if(tx.contractAddress == toaddr || tx.to == toaddr ){
+                                    var v = document.createElement('tr');
+                                    const transactionValues = tx.value * Math.pow(10, -18)
+                                    v.innerHTML = "<td>"+humanDateFormat+" </td><td>"+transactionValues.toFixed(5)+"</td><td>"+method+"</td><td><a href="+link+">Link</a></td><td><a href="+featuredLink+">Link</a></td>";
+                                    tb.lastChild.firstChild.appendChild(v);}
+                            })
+                        }
                     })
                     .catch(err => para1.innerHTML = "Your wallet doesn't exist!");
             }
