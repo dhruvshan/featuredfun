@@ -134,6 +134,9 @@
             else if (methodId.includes('0xa22cb465')) {
                 return 'Set Approval for All'
             }
+            else if (methodId.includes('0x23b872dd')){
+                return 'Transferred From'
+            }
             else return methodId
         }
 
@@ -158,6 +161,11 @@
             if(addr.length == 0){
                 alert("Wallet adddress is empty!");
                 addr.focus;
+                return false;
+            }
+            else if (toaddr.length == 0){
+                alert("Contract/To Address is empty!");
+                toaddr.focus;
                 return false;
             } 
             else{
@@ -211,7 +219,7 @@
                             tb.innerHTML = "<h4>You don't have any transactions</h4>";
                         }
                         else{
-                            tb.innerHTML = '<input type="text" id="myInput" onkeyup="searchFunction()" placeholder="Search for any column.."><br><br><h4>Your last few transaction values (in BNB) are: </h4><br><table id="myTable"><tr><th>Date</th><th onclick="sortTable(1)">Value ⇅</th><th>Token Name</th><th>Token Symbol</th><th>Method</th><th>BSC Link</th><th>FEATURED Link</th></tr>';
+                            tb.innerHTML = '<input type="text" id="myInput" onkeyup="searchFunction()" placeholder="Search"><br><br><h4>Your last few transaction values (in BNB) are: </h4><br><table id="myTable"><tr><th>Date</th><th onclick="sortTable(1)">Value ⇅</th><th>Token Name</th><th>Token Symbol</th><th>Method</th><th>BSC Link</th><th>FEATURED Link</th></tr>';
                             data.result.forEach((tx) => {
                                 const timeStamp = tx.timeStamp;
                                 const method = checkMethod(tx.input);
