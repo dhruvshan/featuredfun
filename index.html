@@ -16,6 +16,8 @@
             <button type="submit" id="submit" onclick="callWallet()">Check Wallet</button>
             <button onclick="callTransaction()">Check My Transactions</button>
             <div class="details">
+                <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for methods..">
+                <!-- <p><button onclick="sortTable()">Sort</button></p> -->
                 <p id="demo"></p>
                 <p id="list"></p>
                 <div id="table"></div>
@@ -25,6 +27,64 @@
 
     <script>
         const apiKey = "9GMT78JQV212YU731F6494NPVCUHP8YK7X";
+
+        function myFunction() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("myTable");
+        tr = table.getElementsByTagName("tr");
+
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[2];
+            if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+            }
+        }
+        }
+
+        function sortTable(n) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById("myTable");
+        switching = true;
+        dir = "asc";
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("TD")[n];
+            y = rows[i + 1].getElementsByTagName("TD")[n];
+            if (dir == "asc") {
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                shouldSwitch = true;
+                break;
+                }
+            } else if (dir == "desc") {
+                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                shouldSwitch = true;
+                break;
+                }
+            }
+            }
+            if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            switchcount ++;
+            } else {
+            if (switchcount == 0 && dir == "asc") {
+                dir = "desc";
+                switching = true;
+            }
+            }
+        }
+        }
+
         function callWallet(){
             const addr = document.getElementById("address").value;
             const para = document.getElementById("demo");
@@ -142,7 +202,7 @@
                             tb.innerHTML = "<h4>You don't have any transactions</h4>";
                         }
                         else{
-                            tb.innerHTML = "<h4>Your last few transaction values (in BNB) are: </h4><br><table><tr><th>Date</th><th>Value</th><th>Method</th><th>BSC Link</th><th>Featured Link</th></tr>";
+                            tb.innerHTML = '<h4>Your last few transaction values (in BNB) are: </h4><br><table id="myTable"><tr><th onclick="sortTable(0)">Date</th><th onclick="sortTable(1)">Value</th><th>Method</th><th>BSC Link</th><th>FEATURED Link</th></tr>';
                             data.result.forEach((tx) => {
                                 const timeStamp = tx.timeStamp;
                                 const method = checkMethod(tx.input);
