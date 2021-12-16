@@ -26,7 +26,7 @@
     </div>
 
     <script>
-        const apiKey = "U3Q7SP7XW5N2B3FRIS4GRK5HSDKKKDJ991";
+        const apiKey = "9GMT78JQV212YU731F6494NPVCUHP8YK7X";
 
         function myFunction() {
         var input, filter, table, tr, td, i, txtValue;
@@ -98,7 +98,6 @@
             fetch(apiURL).then(response => {
                 return response.json();
             }).then(data => {
-                console.log(data);
                 const result = data.result * Math.pow(10, -18)
                 para.innerHTML = "You have <strong>" + result+ "</strong> BNB!";
                 
@@ -137,50 +136,91 @@
             return "https://bscscan.com/tx/"+ hash;
         }
 
+        function makeFeaturedLink(contract, tokenID) {
+            if (contract !== null && tokenID !== null) {
+                return "https://www.featured.market/nft/"+ contract +"/"+ tokenID;
+            }
+            else return "https://www.featured.market/"
+        }
+
         function callTransaction(){
             const addr = document.getElementById("address").value;
-            // console.log(addr);
             const toaddr = document.getElementById("toaddress").value;
-            // console.log(toaddr);
             const para1 = document.getElementById("list");
             const tb = document.getElementById("table");
+            var txData;
+            var contractData;
             if(addr.length == 0){
                 alert("Wallet adddress is empty!");
                 addr.focus;
                 return false;
             } 
             else{
-            
-            console.log(addr);
-            apiURL = 'https://api.bscscan.com/api?module=account&action=txlist&address='+addr+'&startblock=0&endblock=99999999&apikey='+apiKey;
-            fetch(apiURL).then(response => {
-                return response.json();
-            }).then(data => {
-                if (data.result.length == 0){
-                    tb.innerHTML = "<h4>You don't have any transactions</h4>";
+                apiURL = 'https://api.bscscan.com/api?module=account&action=txlist&address='+addr+'&startblock=0&endblock=99999999&apikey='+apiKey;
+                apiURL2 = 'https://api.bscscan.com/api?module=account&action=tokennfttx&address='+addr+'&page=1&offset=100&startblock=0&endblock=999999999&sort=asc&apikey='+apiKey;
+
+                const checkResponseStatus = (response) => {
+                    if (!response.ok) throw new Error(`Status code error: ${response.status}`);
+	                return response.json();
+                };
+
+                const fetchContractData = () => {
+                    return fetch(apiURL2);
+                };
+
+                const appendContactData = () => {
+                    if (txData.result.length === 0 || contractData.result.length === 0) {
+                        return []
+                    }
+                    else {
+                        txData.result.forEach(tx => {
+                            var relatedData = contractData.result.filter(contract => {
+                                return contract.hash === tx.hash;
+                            })
+                            if (!relatedData[0]) {
+                                tx.contractAddress = null;
+                                tx.tokenID = null;
+                            }
+                            else {
+                                tx.contractAddress = relatedData[0].contractAddress;
+                                tx.tokenID = relatedData[0].tokenID;
+                            }
+                        })
+                        return txData
+                    }
                 }
-                else{
-                tb.innerHTML = '<h4>Your last few transaction values (in BNB) are: </h4><br><table id="myTable"><tr><th onclick="sortTable(0)">Date</th><th onclick="sortTable(1)">Value</th><th>Method</th><th>BSC Link</th></tr>';
-                for(i in data.result){
-                    const timeStamp = data.result[i].timeStamp;
-                    const method = checkMethod(data.result[i].input);
-                    const link = makeLink(data.result[i].hash);
-                    // console.log(link);
-                    // console.log(method);
-                    // console.log(timeStamp);
-                    const milliseconds = timeStamp * 1000;
-                    const dateObject = new Date(milliseconds);
-                    const humanDateFormat = dateObject.toLocaleString();
-                    // console.log(humanDateFormat);
-                    // console.log(data.result[i]);
-                    if(data.result[i].contractAddress == toaddr || data.result[i].to == toaddr ){
-                        console.log(data.result[i]);
-                        var v = document.createElement('tr');
-                        const transactionValues = data.result[i].value * Math.pow(10, -18)
-                        v.innerHTML = "<td>"+humanDateFormat+" </td><td>"+transactionValues.toFixed(5)+"</td><td>"+method+"</td><td><a href="+link+">Link</a></td>";
-                        tb.lastChild.firstChild.appendChild(v);}
-                }}
-            }).catch(err => para1.innerHTML = "Your wallet doesn't exist!");}
+
+                fetch(apiURL)
+                    .then(checkResponseStatus)
+                    .then(data => txData = data)
+                    .then(fetchContractData)
+                    .then(checkResponseStatus)
+                    .then(data => contractData = data)
+                    .then(appendContactData)
+                    .then(data => {
+                        if (data.result.length == 0){
+                            tb.innerHTML = "<h4>You don't have any transactions</h4>";
+                        }
+                        else{
+                            tb.innerHTML = '<h4>Your last few transaction values (in BNB) are: </h4><br><table id="myTable"><tr><th onclick="sortTable(0)">Date</th><th onclick="sortTable(1)">Value</th><th>Method</th><th>BSC Link</th><th>FEATURED Link</th></tr>';
+                            data.result.forEach((tx) => {
+                                const timeStamp = tx.timeStamp;
+                                const method = checkMethod(tx.input);
+                                const link = makeLink(tx.hash);
+                                const featuredLink = makeFeaturedLink(tx.contractAddress, tx.tokenID);
+                                const milliseconds = timeStamp * 1000;
+                                const dateObject = new Date(milliseconds);
+                                const humanDateFormat = dateObject.toLocaleString();
+                                if(tx.contractAddress == toaddr || tx.to == toaddr ){
+                                    var v = document.createElement('tr');
+                                    const transactionValues = tx.value * Math.pow(10, -18)
+                                    v.innerHTML = "<td>"+humanDateFormat+" </td><td>"+transactionValues.toFixed(5)+"</td><td>"+method+"</td><td><a href="+link+">Link</a></td><td><a href="+featuredLink+">Link</a></td>";
+                                    tb.lastChild.firstChild.appendChild(v);}
+                            })
+                        }
+                    })
+                    .catch(err => para1.innerHTML = "Your wallet doesn't exist!");
+            }
         }
     </script>
     
