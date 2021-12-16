@@ -36,7 +36,7 @@
         tr = table.getElementsByTagName("tr");
 
         for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[2];
+            td = tr[i].getElementsByTagName("td")[3];
             if (td) {
             txtValue = td.textContent || td.innerText;
             if (txtValue.toUpperCase().indexOf(filter) > -1) {
@@ -150,6 +150,8 @@
             const tb = document.getElementById("table");
             var txData;
             var contractData;
+            let detailedNFTData = [];
+    
             if(addr.length == 0){
                 alert("Wallet adddress is empty!");
                 addr.focus;
@@ -167,6 +169,12 @@
                 const fetchContractData = () => {
                     return fetch(apiURL2);
                 };
+
+                const fetchNftTitle = (contract, tokenID) => {
+                    if (contract && tokenID) {
+                        return fetch('https://cors-anywhere.herokuapp.com/https://www.featured.market/api/nft/'+contract+'/'+tokenID);
+                    }
+                }
 
                 const appendContractData = () => {
                     if (txData.result.length === 0 || contractData.result.length === 0) {
@@ -194,6 +202,46 @@
                     }
                 }
 
+                const fetchNFTDetails = async () => {
+                    var NFTData = [];
+                    const promises = txData.result.map((tx, index) => fetchNftTitle(tx.contractAddress, tx.tokenID));
+                    await Promise.all(promises)
+                    .then(responses => {
+                        responses.map(async response => {
+                            if (response) {
+                                data = await response.json();
+                            }
+                            await NFTData.push(data);
+                        })
+                    })
+                    return NFTData;
+                }
+
+                const appendNFTData = () => {
+                    console.log(txData.result, '<- tx data');
+                    console.log(detailedNFTData, '<- nft data')
+                    if (txData.result.length === 0 || detailedNFTData.length === 0) {   
+                        console.log('Im here!');
+                        return [];
+                    }    
+                    else {
+                        console.log('Im behind');
+                        txData.result.forEach(tx => {
+                            var relatedData = detailedNFTData.filter(data => {
+                                return data.tokenID === tx.tokenID;
+                            })
+                            console.log(relatedData, 'relatedData');
+                            if (!relatedData[0]) {
+                                tx.title = null;
+                            }
+                            else {
+                                tx.title = relatedData[0].title;
+                            }
+                        })
+                        return txData;
+                    }
+                }
+
                 fetch(apiURL)
                     .then(checkResponseStatus)
                     .then(data => txData = data)
@@ -201,12 +249,16 @@
                     .then(checkResponseStatus)
                     .then(data => contractData = data)
                     .then(appendContractData)
+                    .then(fetchNFTDetails)
+                    .then(data => detailedNFTData = data)
+                    .then(appendNFTData)
                     .then(data => {
+                        console.log(data, 'data lol');
                         if (data.result.length == 0){
                             tb.innerHTML = "<h4>You don't have any transactions</h4>";
                         }
                         else{
-                            tb.innerHTML = '<h4>Your last few transaction values (in BNB) are: </h4><br><table id="myTable"><tr><th onclick="sortTable(0)">Date</th><th onclick="sortTable(1)">Value</th><th>Token Name</th><th>Token Symbol</th><th>Method</th><th>BSC Link</th><th>FEATURED Link</th></tr>';
+                            tb.innerHTML = '<h4>Your last few transaction values (in BNB) are: </h4><br><table id="myTable"><tr><th onclick="sortTable(1)">Value</th><th>Token Name</th><th>Token Symbol</th><th>Method</th><th>BSC Link</th><th>FEATURED Link</th><th onclick="sortTable(0)">Date</th></tr>';
                             data.result.forEach((tx) => {
                                 const timeStamp = tx.timeStamp;
                                 const method = checkMethod(tx.input);
@@ -218,7 +270,7 @@
                                 if(tx.contractAddress == toaddr || tx.to == toaddr ){
                                     var v = document.createElement('tr');
                                     const transactionValues = tx.value * Math.pow(10, -18)
-                                    v.innerHTML = "<td>"+humanDateFormat+" </td><td>"+transactionValues.toFixed(5)+"</td><td>"+tx.tokenName+"</td><td>"+tx.tokenSymbol+"</td><td>"+method+"</td><td><a href="+link+">Link</a></td><td><a href="+featuredLink+">Link</a></td>";
+                                    v.innerHTML = "<td>"+transactionValues.toFixed(5)+"</td><td>"+tx.tokenName+"</td><td>"+tx.tokenSymbol+"</td><td>"+method+"</td><td><a href="+link+">Link</a></td><td><a href="+featuredLink+">Link</a></td><td>"+humanDateFormat+" </td>";
                                     tb.lastChild.firstChild.appendChild(v);}
                             })
                         }
