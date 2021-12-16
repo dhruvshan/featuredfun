@@ -16,7 +16,7 @@
             <button type="submit" id="submit" onclick="callWallet()">Check Wallet</button>
             <button onclick="callTransaction()">Check My Transactions</button>
             <div class="details">
-                <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for any column..">
+                <input type="text" id="myInput" onkeyup="searchFunction()" placeholder="Search for any column..">
                 <!-- <p><button onclick="sortTable()">Sort</button></p> -->
                 <p id="demo"></p>
                 <p id="list"></p>
@@ -28,7 +28,7 @@
     <script>
         const apiKey = "9GMT78JQV212YU731F6494NPVCUHP8YK7X";
 
-        function myFunction() {
+        function searchFunction() {
             var input, filter, table, tr, td, i;
             input = document.getElementById("myInput");
             filter = input.value.toUpperCase();
@@ -163,7 +163,7 @@
                 return false;
             } 
             else{
-                apiURL = 'https://api.bscscan.com/api?module=account&action=txlist&address='+addr+'&startblock=0&endblock=99999999&apikey='+apiKey;
+                apiURL = 'https://api.bscscan.com/api?module=account&action=txlist&address='+addr+'&startblock=0&endblock=99999999&sort=desc&apikey='+apiKey;
                 apiURL2 = 'https://api.bscscan.com/api?module=account&action=tokennfttx&address='+addr+'&page=1&offset=100&startblock=0&endblock=999999999&sort=asc&apikey='+apiKey;
 
                 const checkResponseStatus = (response) => {
@@ -213,7 +213,7 @@
                             tb.innerHTML = "<h4>You don't have any transactions</h4>";
                         }
                         else{
-                            tb.innerHTML = '<h4>Your last few transaction values (in BNB) are: </h4><br><table id="myTable"><tr><th onclick="sortTable(0)">Date</th><th onclick="sortTable(1)">Value</th><th>Token Name</th><th>Token Symbol</th><th>Method</th><th>BSC Link</th><th>FEATURED Link</th></tr>';
+                            tb.innerHTML = '<h4>Your last few transaction values (in BNB) are: </h4><br><table id="myTable"><tr><th>Date</th><th onclick="sortTable(1)">Value ⇅</th><th>Token Name</th><th>Token Symbol</th><th>Method</th><th>BSC Link</th><th>FEATURED Link</th></tr>';
                             data.result.forEach((tx) => {
                                 const timeStamp = tx.timeStamp;
                                 const method = checkMethod(tx.input);
@@ -221,7 +221,7 @@
                                 const featuredLink = makeFeaturedLink(tx.contractAddress, tx.tokenID);
                                 const milliseconds = timeStamp * 1000;
                                 const dateObject = new Date(milliseconds);
-                                const humanDateFormat = dateObject.toLocaleString();
+                                const humanDateFormat = dateObject.toLocaleString("en-UK");
                                 if(tx.contractAddress == toaddr || tx.to == toaddr ){
                                     var v = document.createElement('tr');
                                     const transactionValues = tx.value * Math.pow(10, -18)
