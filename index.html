@@ -16,6 +16,7 @@
             <button type="submit" id="submit" onclick="callWallet()">Check Wallet</button>
             <button onclick="callTransaction()">Check My Transactions</button>
             <div class="details">
+                
                 <p id="demo"></p>
                 <p id="list"></p>
                 <div id="table"></div>
@@ -26,10 +27,21 @@
     <script>
         const apiKey = "9GMT78JQV212YU731F6494NPVCUHP8YK7X";
 
-        function searchFunction() {
+     
+        function select(value){
+            searchFunction(value);
+        }
+
+        function searchFunction(choice) {
             var input, filter, table, tr, td, i;
             input = document.getElementById("myInput");
-            filter = input.value.toUpperCase();
+            if (choice === null){
+                filter = input.value.toUpperCase();
+            }
+            else {
+                filter = choice.toUpperCase();
+            }
+            
             table = document.getElementById("myTable");
             var rows = table.getElementsByTagName("tr");
             for (i = 1; i < rows.length; i++) {
@@ -219,7 +231,16 @@
                             tb.innerHTML = "<h4>You don't have any transactions</h4>";
                         }
                         else{
-                            tb.innerHTML = '<input type="text" id="myInput" onkeyup="searchFunction()" placeholder="Search"><br><br><h4>Your last few transaction values (in BNB) are: </h4><br><table id="myTable"><tr><th>Date</th><th onclick="sortTable(1)">Value ⇅</th><th>Token Name</th><th>Token Symbol</th><th>Method</th><th>BSC Link</th><th>FEATURED Link</th></tr>';
+                            tb.innerHTML = `
+                            <input type="text" id="myInput" onkeyup="searchFunction()"placeholder="Search"><br><br>
+                            <h5>Sort by Method: </h5><select id="methodSelect" onchange="select(this.value)">
+                                <option value=>All</option>
+                                <option value="List">List</option>
+                                <option value="Purchase">Purchase</option>
+                                <option value="Claim">Claim</option>
+                                <option value="Transfer">Transfer</option>
+                            </select>
+                            <br><br><h4>Your last few transaction values (in BNB) are: </h4><br><table id="myTable"><tr><th>Date</th><th onclick="sortTable(1)">Value ⇅</th><th>Token Name</th><th>Token Symbol</th><th>Method</th><th>BSC Link</th><th>FEATURED Link</th></tr>`;
                             data.result.forEach((tx) => {
                                 const timeStamp = tx.timeStamp;
                                 const method = checkMethod(tx.input);
