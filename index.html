@@ -168,7 +168,7 @@
                     return fetch(apiURL2);
                 };
 
-                const appendContactData = () => {
+                const appendContractData = () => {
                     if (txData.result.length === 0 || contractData.result.length === 0) {
                         return []
                     }
@@ -180,10 +180,14 @@
                             if (!relatedData[0]) {
                                 tx.contractAddress = null;
                                 tx.tokenID = null;
+                                tx.tokenName = null;
+                                tx.tokenSymbol = null;
                             }
                             else {
                                 tx.contractAddress = relatedData[0].contractAddress;
                                 tx.tokenID = relatedData[0].tokenID;
+                                tx.tokenName = relatedData[0].tokenName;
+                                tx.tokenSymbol = relatedData[0].tokenSymbol;
                             }
                         })
                         return txData
@@ -196,13 +200,13 @@
                     .then(fetchContractData)
                     .then(checkResponseStatus)
                     .then(data => contractData = data)
-                    .then(appendContactData)
+                    .then(appendContractData)
                     .then(data => {
                         if (data.result.length == 0){
                             tb.innerHTML = "<h4>You don't have any transactions</h4>";
                         }
                         else{
-                            tb.innerHTML = '<h4>Your last few transaction values (in BNB) are: </h4><br><table id="myTable"><tr><th onclick="sortTable(0)">Date</th><th onclick="sortTable(1)">Value</th><th>Method</th><th>BSC Link</th><th>FEATURED Link</th></tr>';
+                            tb.innerHTML = '<h4>Your last few transaction values (in BNB) are: </h4><br><table id="myTable"><tr><th onclick="sortTable(0)">Date</th><th onclick="sortTable(1)">Value</th><th>Token Name</th><th>Token Symbol</th><th>Method</th><th>BSC Link</th><th>FEATURED Link</th></tr>';
                             data.result.forEach((tx) => {
                                 const timeStamp = tx.timeStamp;
                                 const method = checkMethod(tx.input);
@@ -214,7 +218,7 @@
                                 if(tx.contractAddress == toaddr || tx.to == toaddr ){
                                     var v = document.createElement('tr');
                                     const transactionValues = tx.value * Math.pow(10, -18)
-                                    v.innerHTML = "<td>"+humanDateFormat+" </td><td>"+transactionValues.toFixed(5)+"</td><td>"+method+"</td><td><a href="+link+">Link</a></td><td><a href="+featuredLink+">Link</a></td>";
+                                    v.innerHTML = "<td>"+humanDateFormat+" </td><td>"+transactionValues.toFixed(5)+"</td><td>"+tx.tokenName+"</td><td>"+tx.tokenSymbol+"</td><td>"+method+"</td><td><a href="+link+">Link</a></td><td><a href="+featuredLink+">Link</a></td>";
                                     tb.lastChild.firstChild.appendChild(v);}
                             })
                         }
