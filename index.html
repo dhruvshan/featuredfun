@@ -16,7 +16,7 @@
             <button type="submit" id="submit" onclick="callWallet()">Check Wallet</button>
             <button onclick="callTransaction()">Check My Transactions</button>
             <div class="details">
-                <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for methods..">
+                <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for any column..">
                 <!-- <p><button onclick="sortTable()">Sort</button></p> -->
                 <p id="demo"></p>
                 <p id="list"></p>
@@ -29,23 +29,30 @@
         const apiKey = "9GMT78JQV212YU731F6494NPVCUHP8YK7X";
 
         function myFunction() {
-        var input, filter, table, tr, td, i, txtValue;
-        input = document.getElementById("myInput");
-        filter = input.value.toUpperCase();
-        table = document.getElementById("myTable");
-        tr = table.getElementsByTagName("tr");
+            var input, filter, table, tr, td, i;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            var rows = table.getElementsByTagName("tr");
+            for (i = 1; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName("td");
+                var j;
+                var rowContainsFilter = false;
+                for (j = 1; j < cells.length; j++) {
+                    if (cells[j]) {
+                        if (cells[j].innerHTML.toUpperCase().indexOf(filter) > -1) {
+                        rowContainsFilter = true;
+                        continue;
+                        }
+                    }
+                }   
 
-        for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[2];
-            if (td) {
-            txtValue = td.textContent || td.innerText;
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                tr[i].style.display = "";
-            } else {
-                tr[i].style.display = "none";
+                if (! rowContainsFilter) {
+                    rows[i].style.display = "none";
+                } else {
+                    rows[i].style.display = "";
+                }
             }
-            }
-        }
         }
 
         function sortTable(n) {
