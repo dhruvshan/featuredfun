@@ -28,40 +28,45 @@
 
      
         function select(value){
-            searchFunction(value);
+        var table, filter, tr, td, i, txtValue;
+        filter = value.toUpperCase();
+        table = document.getElementById("myTable");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[4];
+            if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+            }
+        }
         }
 
-        function searchFunction(choice) {
-            var input, filter, table, tr, td, i, n;
-            input = document.getElementById("myInput");
-            if (choice === null){
-                filter = input.value.toUpperCase();
-            }
-            else {
-                filter = choice.toUpperCase();
-            }
-            
-            table = document.getElementById("myTable");
-            var rows = table.getElementsByTagName("tr");
-            for (i = 1; i < rows.length; i++) {
-                var cells = rows[i].getElementsByTagName("td");
-                var j;
-                var rowContainsFilter = false;
-                for (j = 1; j < cells.length; j++) {
-                    if (cells[j]) {
-                        if (cells[j].innerHTML.toUpperCase().indexOf(filter) > -1) {
-                        rowContainsFilter = true;
-                        continue;
-                        }
-                    }
-                }   
+        function searchFunction() {
+        // Declare variables
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("myTable");
+        tr = table.getElementsByTagName("tr");
 
-                if (! rowContainsFilter) {
-                    rows[i].style.display = "none";
-                } else {
-                    rows[i].style.display = "";
-                }
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[2];
+            if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
             }
+            }
+        }
         }
 
         function sortTable(n) {
@@ -231,7 +236,7 @@
                         }
                         else{
                             tb.innerHTML = `
-                            <input type="text" id="myInput" onkeyup="searchFunction()"placeholder="Search"><br><br>
+                            <input type="text" id="myInput" onkeyup="searchFunction()"placeholder="Search by Token Name"><br><br>
                             <h5>Sort by Method: </h5><select id="methodSelect" onchange="select(this.value)">
                                 <option value=>All</option>
                                 <option value="List">List</option>
