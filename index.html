@@ -13,14 +13,13 @@
             <h3>User Report Generator</h3><br>
             <input type="text" id="address" name="address" required placeholder="Your BSC Wallet Address"><br><br>
             <input type="text" id="toaddress" name="toaddress" required placeholder="Contract/To Address"><br><br>
-            <button type="submit" id="submit" onclick="callWallet()">Check Wallet</button>
-            <button onclick="callTransaction()">Check My Transactions</button>
-            <div class="details">
-                
-                <p id="demo"></p>
-                <p id="list"></p>
-                <div id="table"></div>
-            </div>
+            <button type="submit" id="submit" onclick="callWallet()">Check Wallet</button><br><br>
+            <button onclick="callTransaction()">Check My Transactions</button><br><br>
+            <p id="demo"></p>
+        </div>
+        <div class="details">
+            <p id="list"></p>
+            <div id="table"><b>FEATURED Report</b></div>
         </div>
     </div>
 
@@ -33,7 +32,7 @@
         }
 
         function searchFunction(choice) {
-            var input, filter, table, tr, td, i;
+            var input, filter, table, tr, td, i, n;
             input = document.getElementById("myInput");
             if (choice === null){
                 filter = input.value.toUpperCase();
