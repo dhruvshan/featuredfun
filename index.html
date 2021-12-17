@@ -19,7 +19,7 @@
         </div>
         <div class="details">
             <p id="list"></p>
-            <div id="table"><b>FEATURED Report</b></div>
+            <div id="table"><p class="intro">User FEATURED Report</p></div>
         </div>
     </div>
 
@@ -120,7 +120,7 @@
                 return response.json();
             }).then(data => {
                 const result = data.result * Math.pow(10, -18)
-                para.innerHTML = "You have <strong>" + result+ "</strong> BNB!";
+                para.innerHTML = "You have <strong>" + result.toFixed(5)+ "</strong> BNB!";
                 
             }).catch(err => para.innerHTML = "Your wallet doesn't exist!");}
         }

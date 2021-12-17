@@ -52,6 +52,7 @@ input{
     color: white;
 }
 
+
 button{
     padding: 10px;
     background-color: white;
@@ -60,14 +61,21 @@ button{
 }
 
 
-h5{
+h5, h4{
     display:inline-block
 }
 
 select{
     margin-left: 10px ;
+    display: inline-block;
 }
 
 a{
     color: white;
+}
+
+.intro{
+    margin-top: 40vh;
+    font-weight: bold;
+    font-size: large;
 }
