@@ -5,11 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Report MVP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="wrapper">
-        <div class="content">
+    <div class="wrapper row">
+        <div class="content col-lg-3">
             <h3>User Report Generator</h3><br>
             <input type="text" id="address" name="address" required placeholder="Your BSC Wallet Address"><br><br>
             <input type="text" id="toaddress" name="toaddress" required placeholder="Contract/To Address"><br><br>
@@ -17,11 +18,13 @@
             <button onclick="callTransaction()">Check My Transactions</button><br><br>
             <p id="demo"></p>
         </div>
-        <div class="details">
+        <div class="details col-lg-9">
             <p id="list"></p>
             <div id="table"><p class="intro">Welcome To The FEATURED User Report</p></div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
     <script>
         const apiKey = "9GMT78JQV212YU731F6494NPVCUHP8YK7X";
@@ -125,46 +128,64 @@
             }).catch(err => para.innerHTML = "Your wallet doesn't exist!");}
         }
 
-        function checkMethod(methodId) {
-            if (methodId === '0x4e71d92d') {
-                return 'Claim'
+        function linkFeat(a, b){
+            return "https://www.featured.market/nft/"+ a +"/"+ b;
+        }
+
+        function hexToDec(hexString){
+            return parseInt(hexString, 16);
+        }
+
+        function checkMethod(methodId, someInput) {
+            const first = '0x' +  methodId.slice(34, 74);
+            const second = hexToDec(methodId.slice(134, 138));
+
+
+            if (someInput == 0){
+                if (methodId === '0x4e71d92d') {
+                    return 'Claim'
+                }
+                else if (methodId === '0x'){
+                    return 'Transfer'
+                }
+                else if (methodId.includes('0x454a2ab3')){
+                    return 'Bid'
+                }
+                else if (methodId.includes('0xefef39a1')){
+                    return 'Purchase'
+                }
+                else if (methodId.includes('0x158a4d5e')){
+                    return 'Mint'
+                }
+                else if (methodId.includes('0x21b62886')){
+                    return 'Complete Auction'
+                }
+                else if (methodId.includes('0xdda342bb')) {
+                    return 'List'
+                }
+                else if (methodId.includes('0xa22cb465')) {
+                    return 'Set Approval for All'
+                }
+                else if (methodId.includes('0x23b872dd')){
+                    return 'Transferred From'
+                }
+                else return methodId
             }
-            else if (methodId === '0x'){
-                return 'Transfer'
+
+            else{
+                return linkFeat(first, second);
             }
-            else if (methodId.includes('0x454a2ab3')){
-                return 'Bid'
-            }
-            else if (methodId.includes('0xefef39a1')){
-                return 'Purchase'
-            }
-            else if (methodId.includes('0x158a4d5e')){
-                return 'Mint'
-            }
-            else if (methodId.includes('0x21b62886')){
-                return 'Complete Auction'
-            }
-            else if (methodId.includes('0xdda342bb')) {
-                return 'List'
-            }
-            else if (methodId.includes('0xa22cb465')) {
-                return 'Set Approval for All'
-            }
-            else if (methodId.includes('0x23b872dd')){
-                return 'Transferred From'
-            }
-            else return methodId
         }
 
         function makeLink(hash){
             return "https://bscscan.com/tx/"+ hash;
         }
 
-        function makeFeaturedLink(contract, tokenID) {
+        function makeFeaturedLink(contract, tokenID, methInput) {
             if (contract !== null && tokenID !== null) {
                 return "https://www.featured.market/nft/"+ contract +"/"+ tokenID;
             }
-            else return "https://www.featured.market/"
+            else return checkMethod(methInput, 1)
         }
 
         function callTransaction(){
@@ -247,9 +268,9 @@
                             <br><br><h4>Your last few transaction values (in BNB) are: </h4><br><table id="myTable"><tr><th>Date</th><th onclick="sortTable(1)">Value ⇅</th><th>Token Name</th><th>Token Symbol</th><th>Method</th><th>BSC Link</th><th>FEATURED Link</th></tr>`;
                             data.result.forEach((tx) => {
                                 const timeStamp = tx.timeStamp;
-                                const method = checkMethod(tx.input);
+                                const method = checkMethod(tx.input, 0);
                                 const link = makeLink(tx.hash);
-                                const featuredLink = makeFeaturedLink(tx.contractAddress, tx.tokenID);
+                                const featuredLink = makeFeaturedLink(tx.contractAddress, tx.tokenID, tx.input);
                                 const milliseconds = timeStamp * 1000;
                                 const dateObject = new Date(milliseconds);
                                 const humanDateFormat = dateObject.toLocaleString("en-UK");
