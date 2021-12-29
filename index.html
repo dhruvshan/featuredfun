@@ -14,13 +14,12 @@
             <h3>User Report Generator</h3><br>
             <input type="text" id="address" name="address" required placeholder="Your BSC Wallet Address"><br><br>
             <input type="text" id="toaddress" name="toaddress" required placeholder="Contract/To Address"><br><br>
-            <button type="submit" id="submit" onclick="callWallet()">Check Wallet</button><br><br>
-            <button onclick="callTransaction()">Check My Transactions</button><br><br>
+            <button class="button-29" type="submit" id="submit" onclick="callWallet()">Check Wallet</button><br><br>
+            <button class="button-29" onclick="callTransaction()">Check My Transactions</button><br><br>
             <p id="demo"></p>
         </div>
-        <div class="details col-lg-9">
-            <p id="list"></p>
-            <div id="table"><p class="intro">Welcome To The FEATURED User Report</p></div>
+        <div class="details col-lg-8">
+            <div id="table"><p class="intro">Welcome To The FEATURED User Report<p><p id="list"></p></div>
         </div>
     </div>
 
@@ -282,7 +281,7 @@
                             })
                         }
                     })
-                    .catch(err => para1.innerHTML = "Your wallet doesn't exist!");
+                    .catch(err => para1.innerHTML = "Error in transaction/No transactions Found");
             }
         }
     </script>
